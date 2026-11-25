@@ -1,15 +1,25 @@
-# earshot
+<p align="center">
+  <img src="assets/earshot-logo.png" alt="Earshot" width="320">
+</p>
+<p align="center">
+  <a href="#pi-agent-plugin"><img src="https://img.shields.io/badge/Pi_Agent-1.6.0-6D28D9?style=flat-square" alt="Pi Agent 1.6.0"></a>
+  <a href="#mcp-server"><img src="https://img.shields.io/badge/MCP-stdio-0F766E?style=flat-square" alt="MCP over stdio"></a>
+  <a href="#install"><img src="https://img.shields.io/badge/Python-3.10%2B_base-2563EB?style=flat-square" alt="Python 3.10 or newer for the base package"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-B45309?style=flat-square" alt="MIT license"></a>
+</p>
 
-earshot makes sound effects for a coding agent, which cannot hear them. The agent asks in words; earshot answers from
-a catalogue of 922 designs, most of the realistic ones recorded things rebuilt in code, and renders a new take of the
-best one. When the catalogue has no such thing, the answer says so plainly, and `earshot build` makes it from
-recorded parts: the agent names the parts in words, earshot finds a recording for each, lays them out as a recipe and
-listens to the result with its own ears (a listening model) to say how well it fits and what is still off. earshot
-also listens to any sound file and describes it in words and numbers.
+**Give your coding agent a sound to ship.** Ask for a soft success chime, footsteps on gravel, or a room tone that
+sits under dialogue. Earshot picks a design from **922 sounds**, renders a fresh take on your CPU, and writes it to
+an audio file. Most realistic sounds are rebuilt in code from recordings. No GPU is required.
 
-It is made for agents such as Claude Code, which write the code of interfaces, games and films, and for the people
-who work with them. It runs on your own computer's CPU as a command line, a Python package, an MCP server and a
-Claude Code plugin, and every sound it makes is yours to use.
+**Using Pi?** [Install the MCP server and both skills with one command](#pi-agent-plugin).
+Want to hear what it can make? [Play all 922 sounds in your browser](https://leonxlnx.github.io/earshot-site/).
+
+There is no need to settle for the nearest preset. When the catalog has no good match, `earshot build` says so and
+lets the agent assemble a recipe from recorded parts. With the optional listening models, Earshot can assess how
+closely the result fits the request and describe existing audio in words and measurements.
+
+Try it from the CLI, Python, Pi, or Claude Code. Here's what a request for three takes looks like:
 
 ```
 $ earshot make "three variations of a footstep on gravel" -o step.ogg
@@ -20,8 +30,8 @@ played: one event; the action: events=<n> or say it ("footsteps", "knocking", "t
 also: step/gravel, step/floorboard, step/heels
 ```
 
-The three files are three different real footsteps: `step/pebbles` is learned from recordings of steps on gravel
-that are in the public domain, and each file is a new take rendered from them. What the catalogue lacks, the agent
+**One request, three distinct takes.** `step/pebbles` is learned from recordings of steps on gravel
+that are in the public domain, and each file is a new take rendered from them. What the catalog lacks, the agent
 builds with `earshot build`: [Build what is missing](#build-what-is-missing).
 
 ```bash
@@ -31,11 +41,9 @@ pip install "earshot @ git+https://github.com/Leonxlnx/earshot"   # the tool
 
 Install from GitHub: the name `earshot` on PyPI belongs to another project.
 
-[The earshot site](https://leonxlnx.github.io/earshot-site/) plays all 922 sounds in the browser.
+**What you can do:**
 
-What is in the box:
-
-- **Making sounds** (`earshot make`): a catalogue of 922 designs in 384 families holds interface sounds, everyday
+- **Making sounds** (`earshot make`): a catalog of 922 designs in 384 families holds interface sounds, everyday
   foley, ambience beds, game sounds, chip sound, drums, film and motion effects and three short music loops. 309 are
   learned from 692 recordings in the public domain; no audio file is in the repository, and every sound is rendered
   by code when it is asked for. Ready-made sets give an app, a game or a film its sounds in one call.
@@ -46,23 +54,27 @@ What is in the box:
   recording, whether it sounds recorded or synthesized, and a second-by-second account of a film's soundtrack.
 - **Tools for film sound**: a bank of 252 sound effects stored as code, film sound kits, a search that writes
   synthesis code by listening (`forge`), and `fit`, which turns a recording into code.
-- An MCP server with 20 tools, a Claude Code plugin with two commands, and two agent skills.
+- **Work from your agent:** 20 MCP tools, a one-command Pi plugin, a Claude Code plugin with two commands, and two agent skills.
 
-## Contents
+<a name="contents"></a>
+
+## 🧭 Contents
 
 - [Install](#install)
 - [Make sounds](#make-sounds): how to ask, what it can make, sets for an app, a game or a film, files
 - [Build what is missing](#build-what-is-missing): `earshot build`, parts in words, recipes
 - [Listen](#listen)
 - [Film sound: bank, kits, forge, fit](#film-sound-bank-kits-forge-fit)
-- [Use it from an agent](#use-it-from-an-agent): [Pi Agent Plugin](#-pi-agent-plugin), MCP server, Claude Code plugin, Python, skills
+- [Use it from an agent](#use-it-from-an-agent): [Pi Agent Plugin](#pi-agent-plugin), MCP server, Claude Code plugin, Python, skills
 - [How good is it](#how-good-is-it) and [limits](#limits)
-- [History](#history), [repo map](#repo-map), [licence](#licence)
+- [History](#history), [repo map](#repo-map), [license](#licence)
 
-## Install
+<a name="install"></a>
 
-Python 3.10 or newer for the base package, CPU only; no GPU is used. FFmpeg on PATH is used to write OGG, MP3, M4A,
-and WebM and to read video. WAV and FLAC generation does not use FFmpeg. The [Pi Agent Plugin](#-pi-agent-plugin)
+## 📦 Install
+
+**Base package:** Python 3.10 or newer and a CPU; no GPU is used. **FFmpeg** on PATH is used to write OGG, MP3, M4A,
+and WebM and to read video. WAV and FLAC generation does not use FFmpeg. The [Pi Agent Plugin](#pi-agent-plugin)
 requires both `uv` and `ffmpeg` on PATH; a standalone pip install does not require `uv`.
 
 The base install makes sounds: `make`, `make_set`, `sounds`, recipes, the sound bank and film kits, and `pack`, on
@@ -134,9 +146,11 @@ folder with `config.json` and `model.safetensors`, loaded from disk as it is) an
 `EARSHOT_AST_REVISION` (another Hub revision; safetensors weights only). `earshot doctor` reports the revisions and
 what the cache holds; `--load` also what loads.
 
-## Make sounds
+<a name="make-sounds"></a>
 
-`earshot make` reads a request, ranks the catalogue, renders a new take of the best design, checks it without models
+## 🎛️ Make sounds
+
+**Describe the sound and where it belongs.** `earshot make` ranks the catalog, renders a fresh take of the best design, checks it without models
 (clicks, cut tails, clipping, DC) and writes the file. It loads no model and takes a few seconds for a one-shot.
 
 ```
@@ -151,13 +165,15 @@ also: fire/large, fire/small, fire/whoosh
 
 The first line of each file is the result: the design chosen, the length, where the loudest moment is (`peak at`),
 the loudness, `seamless loop` for a loop, `clean` or what the check found, and the words that decided. `also` gives
-three alternatives, to be taken with `--sound ID`. A request that names something the catalogue does not have still
+three alternatives, to be taken with `--sound ID`. A request that names something the catalog does not have still
 gets a file, and the answer says so: `earshot makes no fire alarm; timer/done is only the nearest sound it has`,
 with three starting points and the `earshot build` line that builds it. Lines such as `not followed`, `not in this
 sound` and `not understood` name what the request asked that this sound does not do. Every line and option:
 [docs/MAKE.md](docs/MAKE.md).
 
-### How to ask
+<a name="how-to-ask"></a>
+
+### 💬 How to ask
 
 Name the thing, the job or the sound first; then feelings, material and numbers.
 
@@ -180,7 +196,9 @@ words ("Regen auf Holz" as rain on wood); other languages get "write it in Engli
 `--sound ID` takes a design by name. To steer, ask again with adjectives ("softer", "drier", "longer") rather than
 browsing.
 
-### What it can make
+<a name="what-it-can-make"></a>
+
+### 🎧 What it can make
 
 `earshot sounds` lists every design (`--search`, `--domain`, `--family` narrow it). Ids are `family/name`: what the
 sound is, then its character.
@@ -207,9 +225,11 @@ invented one is still there by its id.
 (the level of 56 bands every 2 ms, how tonal each band is, the stereo image) and renders a new take from them with
 fresh noise and the request's controls. Seeds 0, 1, 2 walk through a design's recordings, the fullest clean one
 first. A thing a person does several times in a row (a walk, a knock, typing, coins) is played as that action when
-the words ask for it. Every recording is credited in a `CREDITS.md` next to its numbers ([Licence](#licence)).
+the words ask for it. Every recording is credited in a `CREDITS.md` next to its numbers ([License](#licence)).
 
-### Sets for an app, a game or a film
+<a name="sets-for-an-app-a-game-or-a-film"></a>
+
+### 🎮 Sets for an app, a game or a film
 
 A ready-made set makes the sounds a kind of product needs in one call, with a `manifest.json`: `ui` (17 interface
 sounds), `game` (22: menus, rewards, jingles, actions), `arcade` (16 chip sounds) and `film` (17 motion-design
@@ -242,7 +262,9 @@ heavy bag dropped under a title and a logo (`title/bag`, `logo/bag`), a stick an
 air rising (`rise/breath`), a sword drawn for a glint (`shine/blade`). The table of roles and the spec:
 [docs/MAKE.md](docs/MAKE.md#a-whole-set).
 
-### Files
+<a name="files"></a>
+
+### 💾 Files
 
 - **Formats**: the extension picks it: wav and flac directly; ogg, webm, m4a and mp3 through ffmpeg. For the web
   write `webm,mp3`: Ogg Vorbis does not play in Safari before 18.4. 48 kHz stereo, or `--mono`.
@@ -258,9 +280,12 @@ air rising (`rise/breath`), a sword drawn for a glint (`shine/blade`). The table
 How each engine works (learned sounds, stitched beds, real instruments, performances, drums, chip, rooms):
 [docs/MAKE.md](docs/MAKE.md#the-engines).
 
-## Build what is missing
+<a name="build-what-is-missing"></a>
 
-`earshot build` makes a sound the catalogue lacks out of recorded parts, with earshot as the ears. An agent that knows
+## 🧩 Build what is missing
+
+**When the right sound isn't in the catalog, build it from parts.** `earshot build` assembles recorded parts and
+uses Earshot to listen to the result. An agent that knows
 what makes the sound names the parts in plain phrases; earshot finds a recording for each, writes its layer from the
 words (how many, when, how long, moving, getting louder, lower, far) and says which design each part became and which
 words it did not understand. Without `--part` it drafts the parts itself from the words. It renders the recipe, hears
@@ -291,11 +316,11 @@ extra it drafts, renders, audits and measures, and says that it did not hear. No
 listening models only judge. The loop, the phrase grammar and what it cannot do: [docs/BUILD.md](docs/BUILD.md).
 
 **Recipes.** A recipe is the small JSON form a build writes, and an agent can write one by hand: layers of the
-catalogue's recordings, moved in pitch, cut, filtered, repeated, scattered (one clap becomes applause), drawn over
+catalog's recordings, moved in pitch, cut, filtered, repeated, scattered (one clap becomes applause), drawn over
 time in level and pitch, carried past the listener, pulsing or drawn longer, with noise for air and a low sine for
 weight (`earshot recipe --example` prints the form; `earshot make --recipe roar.json -o roar.wav` renders it). The
 cookbook (`earshot recipe --list`) holds 99 recipes: 59 answer a request for their thing on their own, and 40 are
-sketches that an answer names only as a starting point. When the catalogue has a recording of the thing itself, the
+sketches that an answer names only as a starting point. When the catalog has a recording of the thing itself, the
 recording answers.
 
 ```
@@ -307,7 +332,9 @@ built from parts by the cookbook recipe car_crash: no design of the catalogue is
 
 Every field of a recipe: [docs/MAKE.md](docs/MAKE.md#when-earshot-has-no-such-sound-build-it).
 
-## Listen
+<a name="listen"></a>
+
+## 👂 Listen
 
 Listening needs the `listen` extra. Every command prints a plain-language summary first; `--json` gives the full
 result and `--out f.json` saves it.
@@ -345,12 +372,14 @@ What an agent sees when it listens to a film with `earshot sheet`:
 
 ![earshot sheet of the launch film](docs/media/launch_sheet.png)
 
-## Film sound: bank, kits, forge, fit
+<a name="film-sound-bank-kits-forge-fit"></a>
+
+## 🎬 Film sound: bank, kits, forge, fit
 
 **The bank and kits** (`earshot sfx`, `earshot kit`; no models, no network). 252 sound effects for code-made films
 render by id: 183 made by the forge in 34 categories, 51 made for films cut to music (`ui_pop`, `knock`, `cut_hit`,
 `mallet`, `drip`, `shutter`, `reverse_swell`), three tuned kalimba voices and 15 fitted from CC0 recordings
-([docs/CREDITS_FIT.md](docs/CREDITS_FIT.md)). Their 209 named members are also in the `make` catalogue. Knobs set a
+([docs/CREDITS_FIT.md](docs/CREDITS_FIT.md)). Their 209 named members are also in the `make` catalog. Knobs set a
 length, the time of a whoosh's loudest moment and a pitch; every render is checked. A kit names one sound per role and
 renders cached takes with their measured onset, peak and end; the `launch` preset sets each role's level over the
 music and its place against the cut, from measurements of professional films.
@@ -386,7 +415,7 @@ judge a forged sound by the model-free measurements, spectrograms next to the re
 
 **fit: audio to code.** `earshot fit` fits a small synthesis model with readable parameters (ringing modes, tracked
 partials, a noise gesture, or layers of them) to a recording and writes it as a forge recipe module that renders new
-takes, variations and morphs. A fit is a derivative of its recording, so it keeps the source's licence. The
+takes, variations and morphs. A fit is a derivative of its recording, so it keeps the source's license. The
 measurements, the replication benchmark against professional sound effects and the limits: [docs/FIT.md](docs/FIT.md).
 
 ```bash
@@ -394,12 +423,16 @@ earshot fit click.wav -o made/click_fit.py --report
 earshot fit --morph a.wav b.wav --amount 0.5 -o made/ab_morph.py
 ```
 
-## Use it from an agent
+<a name="use-it-from-an-agent"></a>
 
-### MCP server
+## 🤖 Use it from an agent
 
-The server needs the `mcp` extra; its making tools need nothing more, and the listening tools need the `listen`
-extra (they answer with the install command until it is there).
+<a name="mcp-server"></a>
+
+### 🔗 MCP server
+
+**Generate sounds with `[mcp]`; add `[listen]` for audio analysis.** If you call a listening tool before installing
+that extra, it returns the install command.
 
 ```bash
 claude mcp add earshot --scope user -e EARSHOT_THREADS=3 -- earshot mcp     # uv or pip install
@@ -420,6 +453,9 @@ The 20 tools: `make` (a request, or a design by id, or a recipe), `make_set` and
 designs sound and `build` does not load them again. On a slow machine start Claude Code with
 `MCP_TIMEOUT=60000`. The optional `llm_critique` tool reads `GEMINI_API_KEY` from the environment; never write a key
 into a file.
+
+<a name="pi-agent-plugin"></a>
+<a name="-pi-agent-plugin"></a>
 
 ### 🔌 Pi Agent Plugin
 
@@ -448,6 +484,8 @@ uninstall only the plugin's copy as follows (adjust the paths if using a custom 
 env UV_TOOL_DIR="$HOME/.pi/agent/bin/.earshot-tools" UV_TOOL_BIN_DIR="$HOME/.pi/agent/bin" uv tool uninstall earshot
 ```
 
+<a name="updating-the-fork-from-upstream"></a>
+
 #### 🔄 Updating the fork from upstream
 
 First sync the fork's `main` with `Leonxlnx/earshot` using GitHub's **Sync fork** or separate automation. Then bring
@@ -464,7 +502,9 @@ git push origin custom
 
 Plugin users can then run `pi update git:github.com/fredjunior54/earshot@custom` to install the published changes.
 
-### Claude Code plugin
+<a name="claude-code-plugin"></a>
+
+### ⚡ Claude Code plugin
 
 The repository is also a Claude Code plugin and its own marketplace. Install the tool first with the `mcp` extra
 (above): the plugin starts the `earshot` on your PATH and installs nothing itself. Then, in Claude Code:
@@ -478,7 +518,9 @@ It brings the two skills, the MCP server (`earshot mcp` with `EARSHOT_THREADS=3`
 two commands: `/earshot:make WORDS` makes one sound into the project, `/earshot:make-set ui|game|arcade|film [theme]`
 a whole set.
 
-### Python
+<a name="python"></a>
+
+### 🐍 Python
 
 ```python
 from earshot.make import make, make_set
@@ -495,7 +537,9 @@ earshot.find('typing.ogg', 'a single isolated key press')
 from earshot import api   # everything in one namespace: api.make, api.rank, api.critique, api.realness_many, ...
 ```
 
-### Agent skills
+<a name="agent-skills"></a>
+
+### 🧰 Agent skills
 
 Two skills ship in `skills/`. `npx skills add Leonxlnx/earshot` installs them; or copy them into `~/.claude/skills/`
 (or a project's `.claude/skills/`).
@@ -504,12 +548,14 @@ Two skills ship in `skills/`. `npx skills add Leonxlnx/earshot` installs them; o
   ask, how to read the answer, how to build what is missing) and how it listens: which command answers which
   question and when not to trust it.
 - **`skills/real-sound`**: a process for realistic soundtracks for code-made films from real licensed recordings:
-  sourcing with licence checks, a music edit, a JSON sound design, a mixer, measured checks, mastering, credits and
+  sourcing with license checks, a music edit, a JSON sound design, a mixer, measured checks, mastering, credits and
   mux. earshot chooses, trims and verifies the sounds.
 
-## How good is it
+<a name="how-good-is-it"></a>
 
-Every number below comes with its method in [docs/VALIDATION.md](docs/VALIDATION.md).
+## 📊 How good is it
+
+**What holds up, and what still needs a human ear?** Find the methods for every number below in [docs/VALIDATION.md](docs/VALIDATION.md).
 
 - **Made sounds.** No listening model decides whether a made sound is good: earshot's own models did not predict
   how a person rated its sounds. The sounds were judged by ear by the maintainer on listening pages that were not
@@ -519,16 +565,16 @@ Every number below comes with its method in [docs/VALIDATION.md](docs/VALIDATION
   interface sounds failed, which is why realistic sounds are learned from recordings now. The sounds built last (the
   interface set, the film and motion hits, the newer learned things and beds, the recipes and builds) have been
   measured but not yet judged by anyone.
-- **Builds**, judged by the listening model, not by a person: rebuilt from other recordings, things the catalogue has
+- **Builds**, judged by the listening model, not by a person: rebuilt from other recordings, things the catalog has
   came out near their real design for textures of many similar events and for pulsing (a purr, a swarm, a boiling
   pot, a campfire); `earshot build applause` prints "a sketch: not clearly it yet" (z +4.69 against +4.50 for the
-  catalogue's applause, 1.0 more is asked); rain and hail on a new surface and a vehicle passing built from another
+  catalog's applause, 1.0 more is asked); rain and hail on a new surface and a vehicle passing built from another
   motor did not.
-  For 30 things the catalogue lacks, 29 builds fit the words better than what `make` hands over
+  For 30 things the catalog lacks, 29 builds fit the words better than what `make` hands over
   ([docs/BUILD.md](docs/BUILD.md#how-well-it-does)).
 - **Understanding requests.** On five development sets the first pick is right for 91.8 to 96.8 % of the requests
   and one of the top three for 95.9 to 99.1 %. On 220 held-out requests written by someone who never saw the
-  catalogue, scored once on an earlier reader, 69.1 % and 76.4 %. Requests that name the thing or the job do far
+  catalog, scored once on an earlier reader, 69.1 % and 76.4 %. Requests that name the thing or the job do far
   better than descriptions of a mood.
 - **Matching descriptions** (125 held-out real recordings): a "strong" verdict is the right kind of sound 98 % of the
   time and the exact variant 61 % of the time.
@@ -539,9 +585,11 @@ Every number below comes with its method in [docs/VALIDATION.md](docs/VALIDATION
 - **Launch scorecard**: each reference film critiqued against the other six falls in range on 86 % of the metrics
   (the no-overfit baseline is about 71 %).
 
-## Limits
+<a name="limits"></a>
 
-`make` chooses and shapes designs from a fixed catalogue. It makes no speech, singing or melodies, and plays
+## 🚧 Limits
+
+**What it won't make:** `make` chooses and shapes designs from a fixed catalog. It makes no speech, singing or melodies, and plays
 instruments only as single notes and short figures; realistic sounds exist only for things someone recorded and put
 in the public domain. A request that describes a mood is understood less well than one that names the sound, and a
 pick without a guess line can still be wrong. `build` is not a way to any sound: it works for textures of many
@@ -549,12 +597,14 @@ similar events and for pulsing (a swarm, a campfire, a purr; applause stays a sk
 new surface, a vehicle passing built from another motor, voices or pure tones; its fit comes from a listening
 model, not a person's ear, and the second ear also objects to some real recordings. earshot hears through two
 open models and a set of measurements: loudness, timing and "is this the kind of sound I asked for" on single sounds
-are trustworthy; tags inside a busy mix, genre and mood are hints; taste, emotion, licences and speech content it
+are trustworthy; tags inside a busy mix, genre and mood are hints; taste, emotion, licenses and speech content it
 cannot judge. Everything it does not make and cannot judge: [docs/LIMITS.md](docs/LIMITS.md).
 
-## History
+<a name="history"></a>
 
-- **1.0** adds making sounds: `make`, `make --set`, `sounds`, `build`, recipes, `pack`, the catalogue learned from
+## 🗓️ History
+
+- **1.0** adds making sounds: `make`, `make --set`, `sounds`, `build`, recipes, `pack`, the catalog learned from
   public-domain recordings, and the Claude Code plugin.
 - **0.4** added the sound of music-led launch films to the bank (51 sounds, the `launch` kit preset) and re-made `fit`
   against professional sound effects. [The 0.4 launch film](https://github.com/Leonxlnx/earshot/releases/tag/v0.4.0)
@@ -565,7 +615,9 @@ cannot judge. Everything it does not make and cannot judge: [docs/LIMITS.md](doc
 
 Every change: [CHANGELOG.md](CHANGELOG.md).
 
-## Repo map
+<a name="repo-map"></a>
+
+## 🗂️ Repo map
 
 ```
 earshot/            the package: CLI, Python API, MCP server, CPU model wrappers
@@ -585,18 +637,22 @@ earshot/            the package: CLI, Python API, MCP server, CPU model wrappers
 skills/earshot/     agent skill: how to make sounds and listen with earshot
 skills/real-sound/  agent skill: real-recordings soundtracks
 docs/               MAKE, BUILD, VALIDATION, LIMITS, FORGE_V2, FIT, SFX, the motion-sound study, design notes
+pi/                 Pi Agent extension and isolated uv installer; package.json declares the plugin
+assets/             project logo
 .claude-plugin/     the Claude Code plugin and its marketplace; commands/: /earshot:make, /earshot:make-set
 eval/               evaluation scripts and results per area (see eval/README.md)
 tests/              pytest: fast by default, no models; --slow loads the models and renders the long designs
 ```
 
-No audio or video is stored in this repository. The learned sounds are numbers analysed from public-domain
+No audio or video is stored in this repository. The learned sounds are numbers analyzed from public-domain
 recordings, not the recordings. The evaluation data (licensed recordings and third-party films) is not
 redistributed; only derived numbers are committed.
 
-## Licence
+<a name="licence"></a>
 
-MIT for the code (see [LICENSE](LICENSE)). Everything earshot renders (`make`, `sfx`, `kit`, `forge`) belongs to
+## ⚖️ License
+
+**MIT for the code** (see [LICENSE](LICENSE)). Everything earshot renders (`make`, `sfx`, `kit`, `forge`) belongs to
 whoever rendered it: free for any use, commercial too, without credit. The learned sounds, beds, drums and instrument
 notes come from recordings in the public domain (BigSoundBank, Kenney, VCSL, VSCO-2 CE, Karoryfer and CC0 uploads on
 Freesound, all CC0 or an explicit public-domain dedication), each recording credited in
@@ -605,6 +661,6 @@ Freesound, all CC0 or an explicit public-domain dedication), each recording cred
 [earshot/data/drums/CREDITS.md](earshot/data/drums/CREDITS.md) and
 [earshot/data/notes/CREDITS.md](earshot/data/notes/CREDITS.md); CC0 asks for no credit, and the files keep it
 anyway. The bank's fitted sounds come from CC0 recordings ([docs/CREDITS_FIT.md](docs/CREDITS_FIT.md)); a fit you make
-of your own recording carries that recording's licence. The models are downloaded from their authors under their own
-licences: CLAP (`laion/larger_clap_general`) Apache-2.0, AST (`MIT/ast-finetuned-audioset-10-10-0.4593`)
+of your own recording carries that recording's license. The models are downloaded from their authors under their own
+licenses: CLAP (`laion/larger_clap_general`) Apache-2.0, AST (`MIT/ast-finetuned-audioset-10-10-0.4593`)
 BSD-3-Clause. `skills/real-sound/scripts/master.py` is vendored from the Cinetic skill by the same author.
