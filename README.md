@@ -55,14 +55,15 @@ What is in the box:
 - [Build what is missing](#build-what-is-missing): `earshot build`, parts in words, recipes
 - [Listen](#listen)
 - [Film sound: bank, kits, forge, fit](#film-sound-bank-kits-forge-fit)
-- [Use it from an agent](#use-it-from-an-agent): MCP server, Claude Code plugin, Python, skills
+- [Use it from an agent](#use-it-from-an-agent): [Pi Agent Plugin](#-pi-agent-plugin), MCP server, Claude Code plugin, Python, skills
 - [How good is it](#how-good-is-it) and [limits](#limits)
 - [History](#history), [repo map](#repo-map), [licence](#licence)
 
 ## Install
 
-Python 3.10 or newer, CPU only; no GPU is used. ffmpeg on PATH is needed only to write ogg, mp3, m4a and webm (wav
-and flac are written without it) and to read video.
+Python 3.10 or newer for the base package, CPU only; no GPU is used. FFmpeg on PATH is used to write OGG, MP3, M4A,
+and WebM and to read video. WAV and FLAC generation does not use FFmpeg. The [Pi Agent Plugin](#-pi-agent-plugin)
+requires both `uv` and `ffmpeg` on PATH; a standalone pip install does not require `uv`.
 
 The base install makes sounds: `make`, `make_set`, `sounds`, recipes, the sound bank and film kits, and `pack`, on
 the command line, in Python and as MCP tools. It brings numpy, scipy, soundfile, soxr and numba (about 350 MB
@@ -419,6 +420,49 @@ The 20 tools: `make` (a request, or a design by id, or a recipe), `make_set` and
 designs sound and `build` does not load them again. On a slow machine start Claude Code with
 `MCP_TIMEOUT=60000`. The optional `llm_critique` tool reads `GEMINI_API_KEY` from the environment; never write a key
 into a file.
+
+### 🔌 Pi Agent Plugin
+
+**Requirements:** Pi Agent 1.6.0 with its built-in MCP support, `uv` and `ffmpeg` on PATH, and the standard npm
+installation path with lifecycle scripts enabled. From any directory, install the MCP server and both skills with
+one command:
+
+```bash
+pi install git:github.com/fredjunior54/earshot@custom
+```
+
+The package installs `~/.pi/agent/bin/earshot` in an isolated uv environment and registers the local stdio MCP when
+Pi loads the extension. It does not edit `mcp.json` or install the optional listening models. Before installing,
+remove any manually registered `earshot` MCP entry and manual copies of the `earshot` and `real-sound` skills to
+avoid overriding or duplicating the package resources. Open Pi (or run `/reload` in an open session), check `/mcp`
+for the server, and use `/skill:earshot` for sound effects or `/skill:real-sound` for soundtrack work.
+
+If Pi settings are synced to other machines, each machine that loads the package needs its own `uv` and `ffmpeg`.
+To update Earshot alone, run `pi update git:github.com/fredjunior54/earshot@custom`; `pi update --extensions` updates
+all installed packages. Run `/reload` afterward if Pi is open.
+
+To remove the package, run `pi remove git:github.com/fredjunior54/earshot@custom`. If the Python tool remains,
+uninstall only the plugin's copy as follows (adjust the paths if using a custom Pi agent directory):
+
+```bash
+env UV_TOOL_DIR="$HOME/.pi/agent/bin/.earshot-tools" UV_TOOL_BIN_DIR="$HOME/.pi/agent/bin" uv tool uninstall earshot
+```
+
+#### 🔄 Updating the fork from upstream
+
+First sync the fork's `main` with `Leonxlnx/earshot` using GitHub's **Sync fork** or separate automation. Then bring
+those changes into `custom`. Resolve any conflicts on `custom`, run the plugin tests, and push only after they pass:
+
+```bash
+git switch main
+git pull --ff-only origin main
+git switch custom
+git merge main
+# Run the plugin tests before pushing.
+git push origin custom
+```
+
+Plugin users can then run `pi update git:github.com/fredjunior54/earshot@custom` to install the published changes.
 
 ### Claude Code plugin
 
